@@ -123,7 +123,7 @@ em { color: var(--green); font-style: italic; }
 .grade-cartoes-musicais {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  align-items: stretch;
+  align-items: start;
   gap: 52px 19px;
 }
 
@@ -134,7 +134,7 @@ em { color: var(--green); font-style: italic; }
   justify-self: center;
   display: flex;
   flex-direction: column;
-  padding: 10px 10px 18px;
+  padding: 10px 10px 8px;
   cursor: pointer;
   background: #dedfd6;
   border: 1px solid var(--ink);
@@ -216,13 +216,13 @@ em { color: var(--green); font-style: italic; }
   transform: rotate(45deg);
 }
 
-.informacoes-cartao { display: flex; align-items: start; justify-content: space-between; gap: 12px; min-height: 88px; padding-top: 16px; border-top: 1px solid var(--ink); }
+.informacoes-cartao { display: flex; align-items: start; justify-content: space-between; gap: 12px; min-height: 78px; padding-top: 16px; border-top: 1px solid var(--ink); }
 .informacoes-cartao > div { min-width: 0; }
-.informacoes-cartao h2 { display: -webkit-box; max-height: 2.1em; margin: 0 0 5px; overflow: hidden; font: 400 25px/1.05 var(--serif); -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.informacoes-cartao h2 { display: -webkit-box; height: 2.1em; max-height: 2.1em; margin: 0 0 5px; overflow: hidden; font: 400 25px/1.05 var(--serif); -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .informacoes-cartao p { margin: 0; color: var(--muted); font: 10px var(--mono); text-transform: uppercase; }
 .cartao-musical.playing { border-color: transparent; outline: 2px solid var(--green); outline-offset: 4px; }
-.descricao-artista { max-height: 0; overflow: hidden; color: #5c625b; font-size: 13px; line-height: 1.6; transition: max-height .35s, padding .35s; }
-.cartao-musical.expanded .descricao-artista { max-height: 150px; overflow-y: auto; padding-top: 16px; }
+.descricao-artista { height: 0; max-height: 0; overflow: hidden; color: #5c625b; font-size: 13px; line-height: 1.6; transition: height .35s, max-height .35s, padding .35s; }
+.cartao-musical.expanded .descricao-artista { height: 150px; max-height: 150px; overflow-y: auto; padding-top: 16px; }
 .cartao-musical.expanded .descricao-artista::-webkit-scrollbar { width: 5px; }
 .cartao-musical.expanded .descricao-artista::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 5px; }
 .rodape-site { min-height: 86px; border-top: 1px solid var(--line); background: #dedfd6; }
