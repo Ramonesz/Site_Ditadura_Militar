@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Quiz sobre a influência da música na ditadura militar." />
+    <link rel="stylesheet" href="../css/style.css" />
+    <title>Quiz | Vozes em resistência</title>
+  </head>
+  <body class="pagina-quiz">
+    <main id="top">
+      <a class="voltar-capa voltar-link" href="selecao.html" aria-label="Voltar para a seleção" title="Voltar para a seleção"><span aria-hidden="true">←</span> Voltar</a>
+      <section class="area-quiz" aria-label="Quiz sobre a ditadura militar">
+        <div class="quiz-apresentacao" id="quiz-apresentacao">
+          <h1>Quanto você conhece<br><em>essa história?</em></h1>
+          <p class="quiz-em-breve">Teste seus conhecimentos sobre a influência da música na Ditadura Militar, a censura e as formas de resistência cultural.</p>
+          <button class="botao-iniciar-quiz" id="iniciar-quiz" type="button">Iniciar quiz</button>
+        </div>
+        <div class="quiz-jogo" id="quiz-jogo" hidden>
+          <div class="quiz-cabecalho"><span id="quiz-progresso">Pergunta 1 de 10</span><span id="quiz-pontuacao">0 acertos</span></div>
+          <h2 id="quiz-pergunta"></h2>
+          <div class="quiz-respostas" id="quiz-respostas"></div>
+          <p class="quiz-feedback" id="quiz-feedback" aria-live="polite"></p>
+          <button class="botao-proxima-quiz" id="proxima-quiz" type="button" hidden>Próxima pergunta</button>
+        </div>
+        <div class="quiz-resultado" id="quiz-resultado" hidden>
+          <h2 id="quiz-resultado-titulo"></h2>
+          <p id="quiz-resultado-texto"></p>
+          <button class="botao-iniciar-quiz" id="reiniciar-quiz" type="button">Refazer quiz</button>
+          <a class="botao-iniciar-quiz link-resultado" href="selecao.html">Voltar para seleção</a>
+        </div>
+      </section>
+    </main>
+    <footer class="rodape-site" aria-label="Rodapé">
+      <div class="rodape-conteudo"><div class="rodape-mensagem"><p class="rodape-overline">Arquivo musical</p><h2>Vozes em resistência</h2><p class="rodape-frase">Quando a história tenta silenciar, a música encontra um jeito de continuar.</p><div class="links-rodape"><a class="link-capa" href="selecao.html">Voltar para a seleção</a><a class="link-acervo" href="musicas.html">Explorar as músicas</a></div></div><div class="rodape-marca"><img src="../imagens/roda pe/1d68badb-1b91-4f34-baeb-71736e44b2eb.png" alt="Logo do IFC"></div></div>
+    </footer>
+    <script src="../js/quiz-data.js"></script>
+    <script src="../js/main.js"></script>
+  </body>
+</html>

@@ -1,9 +1,8 @@
 const audio = new Audio()
-const audioSwap = new Audio('audio/efeitos sonoros/swap.wav')
-const audioSwapBack = new Audio('audio/efeitos sonoros/swap1.wav')
-const telaInicial = document.querySelector('.tela-inicial')
-const botaoVoltarCapa = document.querySelector('.voltar-capa')
-const linkVoltarCapa = document.querySelector('.link-capa')
+const audioEntradaSite = new Audio('../audio/efeitos sonoros/entrada-site.wav')
+const audioClique = new Audio('../audio/efeitos sonoros/clique-navegacao.wav')
+const audioRespostaCerta = new Audio('../audio/efeitos sonoros/resposta-correta.mp3')
+const audioRespostaErrada = new Audio('../audio/efeitos sonoros/resposta-incorreta.mp3')
 const botaoReproduzir = document.querySelector('#botao-reproduzir')
 const nomeMusica = document.querySelector('#nome-musica')
 const nomeArtista = document.querySelector('#nome-artista')
@@ -15,6 +14,29 @@ const volumeSlider = document.querySelector('.volume-slider')
 const artePlayer = document.querySelector('.arte-player')
 
 audio.volume = 0.8
+
+function playClickSound() {
+  audioClique.currentTime = 0
+  audioClique.play().catch(() => {})
+}
+
+function navigateWithTransition(link) {
+  const isCoverLink = link.classList.contains('tela-inicial')
+  if (isCoverLink) {
+    audioEntradaSite.currentTime = 0
+    audioEntradaSite.play().catch(() => {})
+  } else {
+    playClickSound()
+  }
+  if (isCoverLink) {
+    link.classList.add('capa-saindo')
+  } else {
+    document.body.classList.add('pagina-saindo')
+  }
+  window.setTimeout(() => {
+    window.location.href = link.href
+  }, isCoverLink ? 700 : 520)
+}
 
 function setupFlipCards() {
   cartoesMusicais.forEach((card) => {
@@ -135,12 +157,6 @@ function selectArtist(card) {
   })
 }
 
-function openArchive() {
-  audioSwap.currentTime = 0
-  audioSwap.play().catch(() => {})
-  document.body.classList.add('acervo-aberto')
-}
-
 function updatePlayerAtPageEnd() {
   if (!document.body.classList.contains('player-visivel')) return
 
@@ -151,26 +167,16 @@ function updatePlayerAtPageEnd() {
 window.addEventListener('scroll', updatePlayerAtPageEnd, { passive: true })
 window.addEventListener('resize', updatePlayerAtPageEnd)
 
-telaInicial?.addEventListener('click', openArchive)
-telaInicial?.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter' || event.key === ' ') {
+document.querySelectorAll('a[href$=".html"]').forEach((link) => {
+  link.addEventListener('click', (event) => {
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
+
     event.preventDefault()
-    openArchive()
-  }
+    pauseMusic()
+    closeExpandedDescriptions()
+    navigateWithTransition(link)
+  })
 })
-
-function voltarParaCapa(event) {
-  event?.preventDefault()
-  pauseMusic()
-  closeExpandedDescriptions()
-  audioSwapBack.currentTime = 0
-  audioSwapBack.play().catch(() => {})
-  document.body.classList.remove('acervo-aberto', 'player-visivel')
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
-
-botaoVoltarCapa?.addEventListener('click', voltarParaCapa)
-linkVoltarCapa?.addEventListener('click', voltarParaCapa)
 
 cartoesMusicais.forEach((card) => {
   const selectCard = () => {
@@ -202,7 +208,7 @@ cartoesMusicais.forEach((card) => {
 })
 
 document.addEventListener('click', (event) => {
-  if (event.target.closest('.cartao-musical, .player-audio, .tela-inicial, .voltar-capa')) {
+  if (event.target.closest('.cartao-musical, .player-audio, a[href], .voltar-capa, .link-acervo')) {
     return
   }
 
@@ -324,3 +330,152 @@ audio.addEventListener('ended', () => {
 if (artePlayer && artePlayer.innerHTML.trim() === '') {
   artePlayer.innerHTML = '♪'
 }
+
+const quizInicio = document.querySelector('#iniciar-quiz')
+const quizReinicio = document.querySelector('#reiniciar-quiz')
+const quizApresentacao = document.querySelector('#quiz-apresentacao')
+const quizJogo = document.querySelector('#quiz-jogo')
+const quizResultado = document.querySelector('#quiz-resultado')
+const quizProgresso = document.querySelector('#quiz-progresso')
+const quizPontuacao = document.querySelector('#quiz-pontuacao')
+const quizPergunta = document.querySelector('#quiz-pergunta')
+const quizRespostas = document.querySelector('#quiz-respostas')
+const quizFeedback = document.querySelector('#quiz-feedback')
+const quizProxima = document.querySelector('#proxima-quiz')
+const quizResultadoTitulo = document.querySelector('#quiz-resultado-titulo')
+const quizResultadoTexto = document.querySelector('#quiz-resultado-texto')
+
+let perguntaAtual = 0
+let acertosQuiz = 0
+let perguntasAtuais = []
+
+function prepararPerguntasQuiz() {
+  perguntasAtuais = perguntasQuiz.map((pergunta) => {
+    const respostas = pergunta.respostas.map((texto, indice) => ({
+      texto,
+      correta: indice === pergunta.correta,
+    }))
+
+    for (let indice = respostas.length - 1; indice > 0; indice -= 1) {
+      const indiceAleatorio = Math.floor(Math.random() * (indice + 1))
+      const respostaTemporaria = respostas[indice]
+      respostas[indice] = respostas[indiceAleatorio]
+      respostas[indiceAleatorio] = respostaTemporaria
+    }
+
+    return {
+      pergunta: pergunta.pergunta,
+      respostas: respostas.map((resposta) => resposta.texto),
+      correta: respostas.findIndex((resposta) => resposta.correta),
+    }
+  })
+}
+
+function atualizarPontuacaoQuiz() {
+  if (quizPontuacao) quizPontuacao.textContent = `${acertosQuiz} ${acertosQuiz === 1 ? 'acerto' : 'acertos'}`
+}
+
+function mostrarPerguntaQuiz() {
+  const item = perguntasAtuais[perguntaAtual]
+  if (!item || !quizPergunta || !quizRespostas) return
+
+  quizProgresso.textContent = `Pergunta ${perguntaAtual + 1} de ${perguntasAtuais.length}`
+  quizPergunta.textContent = item.pergunta
+  quizRespostas.innerHTML = ''
+  quizFeedback.textContent = ''
+  quizFeedback.className = 'quiz-feedback'
+  quizProxima.hidden = true
+
+  item.respostas.forEach((resposta, indice) => {
+    const botao = document.createElement('button')
+    botao.className = 'quiz-resposta'
+    botao.type = 'button'
+    botao.textContent = `${String.fromCharCode(97 + indice)}) ${resposta}`
+    botao.addEventListener('click', () => corrigirRespostaQuiz(indice, item.correta))
+    quizRespostas.appendChild(botao)
+  })
+  atualizarPontuacaoQuiz()
+}
+
+function corrigirRespostaQuiz(indiceEscolhido, indiceCorreto) {
+  const botoes = quizRespostas.querySelectorAll('.quiz-resposta')
+  botoes.forEach((botao) => { botao.disabled = true })
+
+  if (indiceEscolhido === indiceCorreto) {
+    botoes[indiceEscolhido].classList.add('correta')
+    acertosQuiz += 1
+    audioRespostaCerta.currentTime = 0
+    audioRespostaCerta.play().catch(() => {})
+    quizFeedback.textContent = ''
+    quizFeedback.classList.add('feedback-correto')
+  } else {
+    botoes[indiceEscolhido].classList.add('errada')
+    botoes[indiceCorreto].classList.add('correta')
+    audioRespostaErrada.currentTime = 0
+    audioRespostaErrada.play().catch(() => {})
+    quizFeedback.textContent = ''
+    quizFeedback.classList.add('feedback-errado')
+  }
+
+  atualizarPontuacaoQuiz()
+  quizProxima.hidden = false
+  quizProxima.textContent = perguntaAtual === perguntasAtuais.length - 1 ? 'Ver resultado' : 'Próxima pergunta'
+}
+
+function iniciarQuiz() {
+  perguntaAtual = 0
+  acertosQuiz = 0
+  prepararPerguntasQuiz()
+  playClickSound()
+  document.body.classList.add('quiz-iniciado')
+  const primeiraEntrada = !quizApresentacao.hidden
+
+  if (!primeiraEntrada) {
+    quizResultado.hidden = true
+    quizJogo.hidden = false
+    mostrarPerguntaQuiz()
+    return
+  }
+
+  quizInicio.disabled = true
+  quizApresentacao.classList.add('quiz-saindo')
+  window.setTimeout(() => {
+    quizApresentacao.hidden = true
+    quizApresentacao.classList.remove('quiz-saindo')
+    quizResultado.hidden = true
+    quizJogo.hidden = false
+    mostrarPerguntaQuiz()
+  }, 420)
+}
+
+function finalizarQuiz() {
+  quizJogo.hidden = true
+  quizResultado.hidden = false
+  quizResultadoTitulo.textContent = `${acertosQuiz} acertos`
+  const mensagensResultado = [
+    'Você não acertou nenhuma... Talvez seja hora de estudar um pouco mais!',
+    'Pelo menos uma você acertou! Todo começo é alguma coisa.',
+    'Ainda dá para melhorar bastante, mas você já começou bem.',
+    'Não foi ruim, mas ainda falta um pouco para dominar o assunto.',
+    'Quase na metade! Continue tentando.',
+    'Metade do caminho! Um resultado razoável.',
+    'Nada mal! Você mostrou que entende do assunto.',
+    'Muito bem! Você teve um ótimo desempenho.',
+    'Excelente resultado! Você realmente sabe bastante.',
+    'Quase perfeito! Faltou muito pouco para acertar tudo.',
+    'PERFEITO! Você acertou todas as perguntas. Parabéns!',
+  ]
+  quizResultadoTexto.textContent = mensagensResultado[acertosQuiz]
+}
+
+quizInicio?.addEventListener('click', iniciarQuiz)
+quizReinicio?.addEventListener('click', iniciarQuiz)
+quizProxima?.addEventListener('click', () => {
+  playClickSound()
+  if (perguntaAtual === perguntasAtuais.length - 1) {
+    finalizarQuiz()
+    return
+  }
+  perguntaAtual += 1
+  mostrarPerguntaQuiz()
+})
