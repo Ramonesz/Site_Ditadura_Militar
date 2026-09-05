@@ -3,6 +3,7 @@ const audioSwap = new Audio('audio/efeitos sonoros/swap.wav')
 const audioSwapBack = new Audio('audio/efeitos sonoros/swap1.wav')
 const telaInicial = document.querySelector('.tela-inicial')
 const botaoVoltarCapa = document.querySelector('.voltar-capa')
+const linkVoltarCapa = document.querySelector('.link-capa')
 const botaoReproduzir = document.querySelector('#botao-reproduzir')
 const nomeMusica = document.querySelector('#nome-musica')
 const nomeArtista = document.querySelector('#nome-artista')
@@ -14,6 +15,37 @@ const volumeSlider = document.querySelector('.volume-slider')
 const artePlayer = document.querySelector('.arte-player')
 
 audio.volume = 0.8
+
+function setupFlipCards() {
+  cartoesMusicais.forEach((card) => {
+    const description = card.querySelector('.descricao-artista')
+    const action = card.querySelector('.acao-descricao')
+    if (!description || card.querySelector('.cartao-inner')) return
+
+    const inner = document.createElement('div')
+    const front = document.createElement('div')
+    const back = document.createElement('div')
+    inner.className = 'cartao-inner'
+    front.className = 'cartao-frente'
+    back.className = 'cartao-verso'
+
+    Array.from(card.children).forEach((child) => {
+      if (child === description) {
+        back.appendChild(child)
+      } else {
+        front.appendChild(child)
+      }
+    })
+
+    inner.append(front, back)
+    if (action) {
+      back.appendChild(action.cloneNode(true))
+    }
+    card.appendChild(inner)
+  })
+}
+
+setupFlipCards()
 
 function updateVolumeDisplay() {
   const volume = Math.round(audio.volume * 100)
@@ -42,6 +74,7 @@ function clearPlayingCard() {
 function pauseMusic() {
   audio.pause()
   clearPlayingCard()
+  document.body.classList.remove('player-no-final')
   if (botaoReproduzir) {
     botaoReproduzir.textContent = '▶'
   }
@@ -67,8 +100,9 @@ function resetPlayer() {
 function closeExpandedDescriptions() {
   cartoesMusicais.forEach((card) => {
     card.classList.remove('expanded')
-    const button = card.querySelector('.botao-descricao')
-    button?.setAttribute('aria-expanded', 'false')
+    card.querySelectorAll('.botao-descricao').forEach((button) => {
+      button.setAttribute('aria-expanded', 'false')
+    })
   })
 }
 
@@ -92,6 +126,7 @@ function selectArtist(card) {
   audio.play().then(() => {
     card.classList.add('playing')
     document.body.classList.add('player-visivel')
+    updatePlayerAtPageEnd()
     if (botaoReproduzir) {
       botaoReproduzir.textContent = '×'
     }
@@ -106,6 +141,16 @@ function openArchive() {
   document.body.classList.add('acervo-aberto')
 }
 
+function updatePlayerAtPageEnd() {
+  if (!document.body.classList.contains('player-visivel')) return
+
+  const atPageEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8
+  document.body.classList.toggle('player-no-final', atPageEnd)
+}
+
+window.addEventListener('scroll', updatePlayerAtPageEnd, { passive: true })
+window.addEventListener('resize', updatePlayerAtPageEnd)
+
 telaInicial?.addEventListener('click', openArchive)
 telaInicial?.addEventListener('keydown', (event) => {
   if (event.key === 'Enter' || event.key === ' ') {
@@ -114,13 +159,18 @@ telaInicial?.addEventListener('keydown', (event) => {
   }
 })
 
-botaoVoltarCapa?.addEventListener('click', () => {
+function voltarParaCapa(event) {
+  event?.preventDefault()
   pauseMusic()
   closeExpandedDescriptions()
   audioSwapBack.currentTime = 0
   audioSwapBack.play().catch(() => {})
   document.body.classList.remove('acervo-aberto', 'player-visivel')
-})
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+botaoVoltarCapa?.addEventListener('click', voltarParaCapa)
+linkVoltarCapa?.addEventListener('click', voltarParaCapa)
 
 cartoesMusicais.forEach((card) => {
   const selectCard = () => {
@@ -133,7 +183,9 @@ cartoesMusicais.forEach((card) => {
     if (button) {
       event.stopPropagation()
       const isExpanded = card.classList.toggle('expanded')
-      button.setAttribute('aria-expanded', String(isExpanded))
+      card.querySelectorAll('.botao-descricao').forEach((cardButton) => {
+        cardButton.setAttribute('aria-expanded', String(isExpanded))
+      })
       return
     }
 
@@ -169,6 +221,7 @@ botaoReproduzir?.addEventListener('click', () => {
       if (botaoReproduzir) botaoReproduzir.textContent = '×'
     })
     document.body.classList.add('player-visivel')
+    updatePlayerAtPageEnd()
   } else {
     pauseMusic()
     document.body.classList.remove('player-visivel')
@@ -258,6 +311,7 @@ audio.addEventListener('playing', () => {
 
 audio.addEventListener('pause', () => {
   document.body.classList.remove('player-visivel')
+  document.body.classList.remove('player-no-final')
 })
 
 audio.addEventListener('timeupdate', updateProgressBar)

@@ -91,12 +91,13 @@ Comportamento da pagina
 5. Cards podem ser ativados por clique ou pelas teclas Enter/Espaco.
 6. No estado inicial, a imagem cinza aparece.
 7. No hover ou no estado playing, a imagem da pasta ativo aparece colorida.
-8. O botao circular com icone ⓘ abre e fecha a descricao do artista.
+8. O botao circular com icone ⓘ vira o card em 3D e mostra a descricao do artista na face traseira.
 9. Abaixo do icone existe o texto pequeno Sobre.
-10. O player aparece somente depois que o audio inicia com sucesso.
-11. Se o audio falhar, o card nao permanece ativo, o player e limpo e o estado volta ao inicial.
-12. O player possui play/pause, progresso arrastavel, setas esquerda/direita e controle de volume.
-13. A capa do card e usada como arte no player quando data-cover existe.
+10. A virada nao aumenta a altura do card nem abre uma extensao para baixo.
+11. O player aparece somente depois que o audio inicia com sucesso.
+12. Se o audio falhar, o card nao permanece ativo, o player e limpo e o estado volta ao inicial.
+13. O player possui play/pause, progresso arrastavel, setas esquerda/direita e controle de volume.
+14. A capa do card e usada como arte no player quando data-cover existe.
 
 Padroes visuais
 ---------------

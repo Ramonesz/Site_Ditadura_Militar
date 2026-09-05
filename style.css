@@ -125,7 +125,7 @@ em { color: var(--green); font-style: italic; }
 .grade-cartoes-musicais {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  align-items: start;
+  align-items: stretch;
   gap: 52px 19px;
 }
 
@@ -133,17 +133,21 @@ em { color: var(--green); font-style: italic; }
   min-width: 0;
   position: relative;
   width: calc(100% - 10px);
+  height: 100%;
   justify-self: center;
-  display: flex;
-  flex-direction: column;
-  padding: 10px 10px 8px;
+  perspective: 1000px;
   cursor: pointer;
-  background: #dedfd6;
-  border: 1px solid var(--ink);
-  transition: transform .25s, background .25s;
+  transition: transform .25s;
 }
 
-.cartao-musical:hover { background: #d8dad0; transform: translateY(-5px); }
+.cartao-musical:hover { transform: translateY(-5px); }
+.cartao-inner { position: relative; display: grid; height: 100%; transform-style: preserve-3d; transition: transform .65s cubic-bezier(.2, .7, .2, 1); }
+.cartao-musical.expanded .cartao-inner { transform: rotateY(180deg); }
+.cartao-frente,
+.cartao-verso { grid-area: 1 / 1; min-height: 100%; backface-visibility: hidden; background: #dedfd6; border: 1px solid var(--ink); padding: 10px 10px 8px; }
+.cartao-frente { display: flex; flex-direction: column; }
+.cartao-verso { display: flex; flex-direction: column; justify-content: center; transform: rotateY(180deg); overflow-y: auto; padding: 10px 54px 62px 10px; }
+.cartao-frente:hover { background: #d8dad0; }
 
 .imagem-artista {
   position: relative;
@@ -208,9 +212,14 @@ em { color: var(--green); font-style: italic; }
   flex: 0 0 37px;
   border: 2px solid var(--green);
   border-radius: 50%;
+  background: var(--green);
+  color: var(--ink);
+  font-size: 19px;
+}
+
+.cartao-frente .botao-descricao {
   background: var(--ink);
   color: var(--paper);
-  font-size: 19px;
 }
 
 .botao-descricao:hover,
@@ -221,18 +230,31 @@ em { color: var(--green); font-style: italic; }
   transform: rotate(45deg);
 }
 
-.informacoes-cartao { display: flex; align-items: start; justify-content: space-between; gap: 12px; min-height: 78px; padding-top: 16px; border-top: 1px solid var(--ink); }
-.informacoes-cartao > div { min-width: 0; }
-.acao-descricao { display: flex; flex: 0 0 37px; flex-direction: column; align-items: center; gap: 4px; }
+.informacoes-cartao { display: flex; align-items: start; justify-content: space-between; gap: 12px; min-height: 94px; padding-top: 16px; border-top: 1px solid var(--ink); }
+.informacoes-cartao > div:first-child { min-width: 0; padding-right: 50px; }
+.acao-descricao { position: absolute; right: 8px; bottom: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .rotulo-descricao { color: #000; font: 10px var(--mono); text-transform: uppercase; }
 .informacoes-cartao h2 { display: -webkit-box; height: auto; max-height: 2.1em; margin: 0 0 5px; overflow: hidden; font: 400 25px/1.05 var(--serif); -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
 .informacoes-cartao p { margin: 0; color: var(--muted); font: 10px var(--mono); text-transform: uppercase; }
-.cartao-musical.playing { border-color: transparent; outline: 2px solid var(--green); outline-offset: 4px; }
-.descricao-artista { height: 0; max-height: 0; overflow: hidden; color: #5c625b; font-size: 13px; line-height: 1.6; transition: height .35s, max-height .35s, padding .35s; }
-.cartao-musical.expanded .descricao-artista { height: 150px; max-height: 150px; overflow-y: auto; padding-top: 16px; }
-.cartao-musical.expanded .descricao-artista::-webkit-scrollbar { width: 5px; }
-.cartao-musical.expanded .descricao-artista::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 5px; }
-.rodape-site { min-height: 86px; border-top: 1px solid var(--line); background: #dedfd6; }
+.cartao-musical.playing .cartao-frente,
+.cartao-musical.playing .cartao-verso { border-color: var(--green); outline: 2px solid var(--green); outline-offset: 4px; }
+.descricao-artista { margin: 0; color: #5c625b; font-size: 13px; line-height: 1.6; }
+.cartao-verso .descricao-artista strong { color: var(--ink); font-family: var(--serif); font-size: 20px; font-weight: 400; }
+.cartao-verso::-webkit-scrollbar { width: 5px; }
+.cartao-verso::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 5px; }
+.rodape-site { border-top: 1px solid var(--ink); background: #dedfd6; color: var(--ink); }
+.rodape-conteudo { display: flex; align-items: center; justify-content: space-between; gap: 32px; max-width: 1370px; min-height: 175px; margin: auto; padding: 28px 5vw 24px; }
+.rodape-mensagem { max-width: 650px; }
+.rodape-overline { margin: 0 0 8px; color: var(--muted); font: 9px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.rodape-mensagem h2 { max-width: 600px; margin: 0; font: 400 clamp(30px, 3.5vw, 44px)/.95 var(--serif); }
+.rodape-frase { max-width: 480px; margin: 10px 0 14px; color: #5c625b; font-size: 13px; line-height: 1.4; }
+.links-rodape { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.link-capa,
+.link-acervo { color: #2f6f38; font: 11px var(--mono); text-decoration: none; text-transform: uppercase; }
+.link-capa:hover,
+.link-acervo:hover { color: var(--ink); }
+.rodape-marca { display: flex; flex-direction: column; align-items: flex-end; gap: 13px; color: #aeb6ab; font: 10px var(--mono); text-align: right; text-transform: uppercase; }
+.rodape-marca img { width: min(180px, 25vw); max-height: 105px; object-fit: contain; }
 
 .player-audio {
   position: fixed;
@@ -251,10 +273,11 @@ em { color: var(--green); font-style: italic; }
   opacity: 0;
   pointer-events: none;
   transform: translateY(100%);
-  transition: opacity .35s, transform .35s;
+  transition: opacity .45s ease, transform .45s cubic-bezier(.2, .7, .2, 1);
 }
 
 .player-visivel .player-audio { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
+.player-no-final .player-audio { opacity: 0; pointer-events: none; transform: translateY(100%); }
 .arte-player {
   display: grid;
   place-items: center;
@@ -324,6 +347,11 @@ em { color: var(--green); font-style: italic; }
   .intro-copy { font-size: 14px; }
   .grade-cartoes-musicais { grid-template-columns: 1fr; }
   .acervo-musical { padding: 48px 18px 150px; }
+  .rodape-conteudo { align-items: flex-start; flex-direction: column; gap: 24px; min-height: 250px; padding: 28px 18px 24px; }
+  .rodape-mensagem h2 { font-size: clamp(30px, 10vw, 42px); }
+  .rodape-frase { font-size: 13px; }
+  .rodape-marca { align-items: flex-start; text-align: left; }
+  .rodape-marca img { width: 155px; }
   .voltar-capa { top: 10px; left: 10px; width: 34px; height: 34px; }
   .player-audio {
     flex-wrap: wrap;
