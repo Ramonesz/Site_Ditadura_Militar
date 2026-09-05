@@ -1,7 +1,6 @@
 const audio = new Audio()
-const audioSwap = new Audio('Soun Effect/swap.wav')
-const audioSwapBack = new Audio('Soun Effect/swap1.wav')
-const audioSelect = new Audio('Soun Effect/select_sound.wav')
+const audioSwap = new Audio('audio/efeitos sonoros/swap.wav')
+const audioSwapBack = new Audio('audio/efeitos sonoros/swap1.wav')
 const telaInicial = document.querySelector('.tela-inicial')
 const botaoVoltarCapa = document.querySelector('.voltar-capa')
 const botaoReproduzir = document.querySelector('#botao-reproduzir')
@@ -48,6 +47,23 @@ function pauseMusic() {
   }
 }
 
+function resetPlayer() {
+  audio.pause()
+  audio.removeAttribute('src')
+  audio.load()
+  clearPlayingCard()
+  nomeMusica.textContent = 'Escolha uma voz para começar'
+  nomeArtista.textContent = 'O áudio aparecerá aqui'
+  if (botaoReproduzir) {
+    botaoReproduzir.textContent = '▶'
+  }
+  if (artePlayer) {
+    artePlayer.style.backgroundImage = ''
+    artePlayer.innerHTML = '♪'
+  }
+  document.body.classList.remove('player-visivel')
+}
+
 function closeExpandedDescriptions() {
   cartoesMusicais.forEach((card) => {
     card.classList.remove('expanded')
@@ -58,7 +74,6 @@ function closeExpandedDescriptions() {
 
 function selectArtist(card) {
   pauseMusic()
-  card.classList.add('playing')
   nomeMusica.textContent = card.dataset.song
   nomeArtista.textContent = card.dataset.artist || 'Nome do Artista'
   audio.src = card.dataset.audio
@@ -73,17 +88,30 @@ function selectArtist(card) {
     }
   }
 
-  document.body.classList.add('player-visivel')
-  if (botaoReproduzir) {
-    botaoReproduzir.textContent = '×'
-  }
-  audio.play().catch(() => {})
+  audio.load()
+  audio.play().then(() => {
+    card.classList.add('playing')
+    document.body.classList.add('player-visivel')
+    if (botaoReproduzir) {
+      botaoReproduzir.textContent = '×'
+    }
+  }).catch(() => {
+    resetPlayer()
+  })
 }
 
-telaInicial?.addEventListener('click', () => {
+function openArchive() {
   audioSwap.currentTime = 0
   audioSwap.play().catch(() => {})
   document.body.classList.add('acervo-aberto')
+}
+
+telaInicial?.addEventListener('click', openArchive)
+telaInicial?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    openArchive()
+  }
 })
 
 botaoVoltarCapa?.addEventListener('click', () => {
@@ -95,25 +123,29 @@ botaoVoltarCapa?.addEventListener('click', () => {
 })
 
 cartoesMusicais.forEach((card) => {
+  const selectCard = () => {
+    if (card.classList.contains('playing')) return
+    selectArtist(card)
+  }
+
   card.addEventListener('click', (event) => {
     const button = event.target.closest('.botao-descricao')
     if (button) {
       event.stopPropagation()
-      audioSelect.currentTime = 0
-      audioSelect.play().catch(() => {})
       const isExpanded = card.classList.toggle('expanded')
       button.setAttribute('aria-expanded', String(isExpanded))
       return
     }
 
-    if (!card.classList.contains('playing')) {
-      audioSelect.currentTime = 0
-      audioSelect.play().catch(() => {})
-    } else {
-      return
-    }
+    selectCard()
+  })
 
-    selectArtist(card)
+  card.addEventListener('keydown', (event) => {
+    if (event.target.closest('.botao-descricao')) return
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      selectCard()
+    }
   })
 })
 
@@ -232,7 +264,6 @@ audio.addEventListener('timeupdate', updateProgressBar)
 audio.addEventListener('loadedmetadata', updateProgressBar)
 
 audio.addEventListener('ended', () => {
-  botaoReproduzir.textContent = '▶'
   pauseMusic()
 })
 

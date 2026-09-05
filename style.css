@@ -84,19 +84,18 @@ em { color: var(--green); font-style: italic; }
   text-transform: uppercase;
 }
 
-.dica-entrada b { display: none; }
-
 .acervo-musical {
   padding: 75px 5vw 190px;
   border-top: 1px solid var(--line);
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
   transform: translateY(24px);
   transition: opacity .7s .2s, transform .7s .2s;
 }
 
 .acervo-aberto .tela-inicial { opacity: 0; pointer-events: none; transform: translateY(-100%); }
-.acervo-aberto .acervo-musical { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.acervo-aberto .acervo-musical { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
 
 .voltar-capa {
   position: fixed;
@@ -112,12 +111,15 @@ em { color: var(--green); font-style: italic; }
   background: var(--paper);
   color: var(--ink);
   font-size: 21px;
+  line-height: 1;
+  padding: 0 0 2px;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
   transition: opacity .35s, background .2s, transform .2s;
 }
 
-.acervo-aberto .voltar-capa { opacity: 1; pointer-events: auto; }
+.acervo-aberto .voltar-capa { opacity: 1; visibility: visible; pointer-events: auto; }
 .voltar-capa:hover { color: var(--paper); background: var(--ink); transform: translateX(-3px); }
 
 .grade-cartoes-musicais {
@@ -175,6 +177,7 @@ em { color: var(--green); font-style: italic; }
 .imagem-artista .imagem-colorida {
   filter: grayscale(0) contrast(1);
   opacity: 0;
+  visibility: hidden;
 }
 
 .imagem-artista img:not(.imagem-cinza):not(.imagem-colorida) {
@@ -189,11 +192,13 @@ em { color: var(--green); font-style: italic; }
 .cartao-musical:hover .imagem-colorida,
 .cartao-musical.playing .imagem-colorida {
   opacity: 1;
+  visibility: visible;
+  filter: grayscale(0) contrast(1);
   transform: scale(1.035);
 }
 
-.cartao-musical:hover img,
-.cartao-musical.playing img { filter: grayscale(.25) contrast(1); transform: scale(1.035); }
+.cartao-musical:hover img:not(.imagem-colorida),
+.cartao-musical.playing img:not(.imagem-colorida) { filter: grayscale(.25) contrast(1); transform: scale(1.035); }
 
 .botao-descricao {
   display: grid;
@@ -201,7 +206,7 @@ em { color: var(--green); font-style: italic; }
   width: 37px;
   height: 37px;
   flex: 0 0 37px;
-  border: 1px solid rgba(255, 255, 255, .8);
+  border: 2px solid var(--green);
   border-radius: 50%;
   background: var(--ink);
   color: var(--paper);
@@ -218,7 +223,9 @@ em { color: var(--green); font-style: italic; }
 
 .informacoes-cartao { display: flex; align-items: start; justify-content: space-between; gap: 12px; min-height: 78px; padding-top: 16px; border-top: 1px solid var(--ink); }
 .informacoes-cartao > div { min-width: 0; }
-.informacoes-cartao h2 { display: -webkit-box; height: 2.1em; max-height: 2.1em; margin: 0 0 5px; overflow: hidden; font: 400 25px/1.05 var(--serif); -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.acao-descricao { display: flex; flex: 0 0 37px; flex-direction: column; align-items: center; gap: 4px; }
+.rotulo-descricao { color: #000; font: 10px var(--mono); text-transform: uppercase; }
+.informacoes-cartao h2 { display: -webkit-box; height: auto; max-height: 2.1em; margin: 0 0 5px; overflow: hidden; font: 400 25px/1.05 var(--serif); -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
 .informacoes-cartao p { margin: 0; color: var(--muted); font: 10px var(--mono); text-transform: uppercase; }
 .cartao-musical.playing { border-color: transparent; outline: 2px solid var(--green); outline-offset: 4px; }
 .descricao-artista { height: 0; max-height: 0; overflow: hidden; color: #5c625b; font-size: 13px; line-height: 1.6; transition: height .35s, max-height .35s, padding .35s; }
@@ -247,7 +254,7 @@ em { color: var(--green); font-style: italic; }
   transition: opacity .35s, transform .35s;
 }
 
-.player-visivel .player-audio { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.player-visivel .player-audio { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
 .arte-player {
   display: grid;
   place-items: center;
@@ -344,8 +351,6 @@ em { color: var(--green); font-style: italic; }
 
 @media (max-width: 420px) {
   .tela-inicial::after { top: 180px; font-size: 150px; }
-  .dica-entrada { gap: 10px; }
-  .dica-entrada b { width: 30px; height: 30px; }
   .informacoes-cartao h2 { font-size: 18px; }
   .musica-atual strong { font-size: 15px; }
   .musica-atual span { font-size: 9px; }

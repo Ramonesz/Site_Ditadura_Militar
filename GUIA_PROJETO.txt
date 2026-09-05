@@ -1,0 +1,164 @@
+GUIA DO PROJETO
+================
+
+Nome do projeto
+---------------
+Site_Ditadura_Militar
+
+Objetivo
+--------
+Este e um site estatico em portugues brasileiro sobre a influencia da musica durante a Ditadura Militar no Brasil. O projeto apresenta artistas, musicas, imagens e pequenas descricoes historicas em um acervo musical interativo.
+
+Tecnologias
+-----------
+- HTML5
+- CSS3
+- JavaScript puro, sem framework e sem build
+- Arquivos de audio locais
+- Google Fonts importadas no style.css
+
+Arquivos principais
+-------------------
+- index.html: estrutura da pagina, cards dos artistas, player e referencias de midia.
+- main.js: interacoes, player de audio, navegacao, descricoes, volume e barra de progresso.
+- style.css: identidade visual, layout, responsividade, estados de hover e estados do player.
+- GUIA_PROJETO.txt: este documento de contexto para futuras manutencoes.
+
+Estrutura de pastas
+-------------------
+/
+  index.html
+  main.js
+  style.css
+  GUIA_PROJETO.txt
+  audio/
+    musicas/
+    efeitos sonoros/
+  imagens/
+    capa/
+    ativo/
+    desativado/
+
+Regra para imagens
+------------------
+- imagens/capa: capas exibidas no player.
+- imagens/ativo: imagens coloridas dos artistas. Sao mostradas quando o card recebe hover ou a classe playing.
+- imagens/desativado: imagens em tons de cinza. Sao mostradas no estado inicial do card.
+- A imagem colorida deve usar a classe HTML imagem-colorida.
+- A imagem em tons de cinza deve usar a classe HTML imagem-cinza.
+- Nomes novos devem ser minusculos, claros, sem acentos e preferencialmente em kebab-case.
+- O nome deve identificar o artista. Exemplos:
+  chico-buarque.jpg
+  geraldo-vandre.jpg
+  caetano-veloso.jpeg
+- As extensoes devem corresponder ao formato real do arquivo.
+
+Regra para musicas
+------------------
+- As musicas ficam em audio/musicas.
+- Nomes novos devem ser minusculos, sem acentos e em kebab-case.
+- Usar o padrao artista-musica.extensao.
+- Exemplos:
+  chico-buarque-apesar-de-voce.mp3
+  geraldo-vandre-pra-nao-dizer-que-nao-falei-das-flores.wav
+  caetano-veloso-alegria-alegria.mp3
+- Sempre conferir se o arquivo e realmente um audio valido antes de atualizar o data-audio.
+- Nunca apontar o HTML para um arquivo que nao existe.
+
+Regra para efeitos sonoros
+--------------------------
+- Os efeitos ficam em audio/efeitos sonoros.
+- Arquivos atuais:
+  swap.wav: som da entrada no acervo.
+  swap1.wav: som do retorno para a capa.
+- O som de selecao de card foi removido. Nao reintroduzir audio ao clicar em um card sem solicitacao explicita.
+- Ao alterar caminhos com espacos, manter a string exatamente como caminho relativo valido.
+
+Artistas e estado atual
+-----------------------
+- Chico Buarque: imagem colorida, imagem cinza, capa e audio existentes.
+- Geraldo Vandre: imagem colorida, imagem cinza, capa e audio existentes.
+- Caetano Veloso: imagem colorida, imagem cinza, capa e audio existentes.
+- Elis Regina, Gilberto Gil, Ney Matogrosso, Gonzaguinha, Milton Nascimento e Raul Seixas ainda usam a imagem placeholder em desativado/foto-artista-placeholder.png.
+- Os cards desses seis artistas ainda possuem referencias de audio previstas no HTML, mas os arquivos de audio correspondentes ainda nao existem. Nao considerar esses audios funcionando ate que os arquivos sejam adicionados.
+
+Comportamento da pagina
+-----------------------
+1. A tela inicial ocupa a janela inteira.
+2. A entrada no acervo acontece por clique ou pelas teclas Enter/Espaco quando a tela inicial esta focada.
+3. Ao entrar, o acervo aparece e a tela inicial desliza para cima.
+4. O botao voltar retorna para a capa, pausa a musica e fecha descricoes abertas.
+5. Cards podem ser ativados por clique ou pelas teclas Enter/Espaco.
+6. No estado inicial, a imagem cinza aparece.
+7. No hover ou no estado playing, a imagem da pasta ativo aparece colorida.
+8. O botao circular com icone ⓘ abre e fecha a descricao do artista.
+9. Abaixo do icone existe o texto pequeno Sobre.
+10. O player aparece somente depois que o audio inicia com sucesso.
+11. Se o audio falhar, o card nao permanece ativo, o player e limpo e o estado volta ao inicial.
+12. O player possui play/pause, progresso arrastavel, setas esquerda/direita e controle de volume.
+13. A capa do card e usada como arte no player quando data-cover existe.
+
+Padroes visuais
+---------------
+- Identidade baseada em papel claro, tinta escura, verde de destaque e tipografia editorial.
+- Fontes definidas em style.css:
+  DM Serif Display para titulos.
+  Manrope para texto geral.
+  DM Mono para metadados e rotulos.
+- Cards usam borda escura, fundo claro e leve movimento no hover.
+- A borda do botao Sobre e verde com 2px.
+- O texto Sobre e preto e pequeno.
+- Manter os cards legiveis em desktop e mobile.
+- Nao introduzir gradientes roxos, layouts genericos ou componentes visuais que nao combinem com o acervo.
+
+Regras de manutencao para uma futura IA
+---------------------------------------
+- Ler este arquivo antes de editar qualquer coisa.
+- Ler o trecho proximo ao comportamento que sera alterado antes de modificar.
+- Fazer a menor alteracao possivel e preservar a estrutura existente.
+- Usar apply_patch para editar arquivos existentes.
+- Nao reverter alteracoes do usuario.
+- Nao criar framework, bundler ou dependencia nova para tarefas que podem ser resolvidas com HTML, CSS e JavaScript puro.
+- Nao renomear pastas ou arquivos de midia sem atualizar todas as referencias.
+- Depois de mover qualquer arquivo, testar os caminhos relativos no HTML e no JavaScript.
+- Nao esconder falhas de audio com catch vazio quando o erro altera o estado visual do player.
+- Nao marcar um card como playing antes de audio.play() confirmar o inicio.
+- Manter suporte de teclado para qualquer interacao nova.
+- Manter aria-label, title e aria-expanded coerentes com a funcao dos controles.
+- Nao adicionar codigo morto, seletores CSS sem correspondencia ou referencias para arquivos inexistentes.
+- Nao adicionar comentarios dentro do codigo sem necessidade; este arquivo e o local principal para contexto geral.
+
+Validacao obrigatoria depois de editar
+--------------------------------------
+1. Verificar diagnosticos nos arquivos alterados.
+2. Para JavaScript, executar:
+   node --check .\\main.js
+3. Procurar referencias de midia no HTML e conferir se todos os caminhos existem.
+4. Procurar referencias antigas depois de renomear pastas ou arquivos.
+5. Conferir especialmente:
+   audio/musicas/
+   audio/efeitos sonoros/
+   imagens/capa/
+   imagens/ativo/
+   imagens/desativado/
+6. Testar manualmente a entrada no acervo, hover dos cards, ativacao por teclado, botao Sobre, player, volume, barra de progresso e retorno para a capa.
+
+Comandos uteis no PowerShell
+----------------------------
+- Listar arquivos:
+  Get-ChildItem -Recurse -File
+- Procurar referencias:
+  Select-String -Path .\\index.html,.\\main.js,.\\style.css -Pattern 'audio/|imagens/'
+- Verificar arquivo:
+  Test-Path -LiteralPath '.\\caminho\\arquivo.ext'
+- Validar JavaScript:
+  node --check .\\main.js
+
+Decisoes importantes ja tomadas
+-------------------------------
+- A pasta de efeitos se chama exatamente efeitos sonoros, com espaco.
+- A pasta principal de midia se chama audio.
+- A imagem colorida e controlada pela classe imagem-colorida e pelas regras de hover/playing.
+- O som de selecao de card foi retirado a pedido do usuario.
+- O botao de informacoes usa ⓘ, title Sobre e o texto Sobre abaixo do icone.
+- A seta do botao voltar usa centralizacao por grid, line-height 1 e padding ajustado.
